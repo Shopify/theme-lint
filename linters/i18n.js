@@ -19,7 +19,7 @@ module.exports = class I18nLinter {
 
   listLiquidFiles() {
     return new Promise((resolve, reject) => {
-      glob(this.targetDirectory + '/**/*.liquid', (err, files) => {
+      glob(path.join(this.targetDirectory, '**/*.liquid'), (err, files) => {
         if (err) return reject(err);
         resolve(files);
       });
@@ -51,7 +51,7 @@ module.exports = class I18nLinter {
 
   listTranslationFiles() {
     return new Promise((resolve, reject) => {
-      glob(this.targetDirectory + '/locales/*.json', (err, files) => {
+      glob(path.join(this.targetDirectory, 'locales/*.json'), (err, files) => {
         if (err) return reject(err);
         resolve(files);
       });
