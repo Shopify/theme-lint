@@ -1,19 +1,22 @@
 #!/usr/bin/env node
-const linters = require('./index');
-const path = require('path');
+const linters = require('./index').linters;
 const commander = require('commander');
-//const themePath = path.normalize(process.argv[2]);
 
 commander
   .version('0.0.1')
-  .usage('[options] <file...>')
-  .option('-r, --renderer <file...>', 'A renderer')
+  .arguments('<path>')
+  .action(path => lint(path))
+  .usage('[options] <path>')
+  .option('-r, --renderer <file>', 'A renderer')
   .parse(process.argv);
 
-function lint() {
-  if (linters.length > 0) {
-    const Linter = linters.pop();
-    const linter = new Linter(themePath);
-    linter.run().done(lint);
+function lint(path) {
+  const keys = Object.keys(linters);
+  if (keys.length > 0) {
+    keys.forEach((key) => {
+      const Linter = linters[key];
+      const linter = new Linter(path);
+      linter.run();
+    });
   }
 }
