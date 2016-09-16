@@ -7,8 +7,7 @@ commander
   .version('0.0.1')
   .arguments('<path>')
   .action(path => lint(path))
-  .usage('[options] <path>')
-  .option('-r, --renderer <file>', 'A renderer')
+  .usage('<path>')
   .parse(process.argv);
 
 function lint(path) {
