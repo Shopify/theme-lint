@@ -29,19 +29,19 @@ module.exports = class Reporter {
         chalk.green('All good!'),
         `(${testsRun} checks run)`
       ].join(' '));
-      return;
-    }
-
-    this.outputStream.write([
-      chalk.red('Errors encountered!'),
-      `(${testsRun} checks run)`
-    ].join(' ') + '\n\n');
-
-    this.failures.forEach(([message, file, index]) => {
+    } else {
       this.outputStream.write([
-        chalk.red(`${file}${index ? ':' + index : ''}`),
-        message
-      ].join('\n') + '\n\n');
-    });
+        chalk.red('Errors encountered!'),
+        `(${testsRun} checks run)`
+      ].join(' ') + '\n\n');
+
+      this.failures.forEach(([message, file, index]) => {
+        this.outputStream.write([
+          chalk.red(`${file}${index ? ':' + index : ''}`),
+          message
+        ].join('\n') + '\n\n');
+      });
+    }
+    this.outputStream.write('\n\n');
   }
 };

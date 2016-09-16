@@ -1,8 +1,14 @@
 #!/usr/bin/env node
+'use strict';
+
+const commander = require('commander');
+
 const pkg = require('./package.json');
 const linters = require('./index').linters;
+const Reporter = require('./reporter');
+
 const keys = Object.keys(linters);
-const commander = require('commander');
+const reporter = new Reporter();
 
 commander
   .version(pkg.version)
@@ -19,7 +25,9 @@ function lint(path) {
   const key = keys.pop();
   if (key) {
     const linter = new linters[key](path);
-    linter.run()
+    linter.run(reporter)
       .then(() => {lint(path)});
+  } else {
+    reporter.finalize();
   }
 }
