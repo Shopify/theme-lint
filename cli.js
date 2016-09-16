@@ -11,6 +11,10 @@ commander
   .usage('[options] <path>')
   .parse(process.argv);
 
+if (!process.argv.slice(2).length) {
+  commander.outputHelp();
+}
+
 function lint(path) {
   const key = keys.pop();
   if (key) {
