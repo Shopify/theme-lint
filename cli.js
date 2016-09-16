@@ -8,7 +8,7 @@ commander
   .version(pkg.version)
   .arguments('<path>')
   .action(path => lint(path))
-  .usage('<path>')
+  .usage('[options] <path>')
   .parse(process.argv);
 
 function lint(path) {
