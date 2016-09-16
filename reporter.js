@@ -19,7 +19,7 @@ module.exports = class Reporter {
     this.outputStream.write(chalk.red('.'));
   }
 
-  done() {
+  finalize() {
     this.outputStream.write('\n\n');
 
     const testsRun = this.failures.length + this.successes.length;
