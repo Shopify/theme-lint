@@ -33,13 +33,13 @@ module.exports = class Reporter {
       this.outputStream.write([
         chalk.red('Errors encountered!'),
         `(${testsRun} checks run)`
-      ].join(' ') + '\n\n');
+      ].join(' '));
 
       this.failures.forEach(([message, file, index]) => {
         this.outputStream.write([
           chalk.red(`${file}${index ? ':' + index : ''}`),
           message
-        ].join('\n') + '\n\n');
+        ].join('\n'));
       });
     }
     this.outputStream.write('\n\n');
