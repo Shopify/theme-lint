@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 const linters = require('./index').linters;
+const keys = Object.keys(linters);
 const commander = require('commander');
 
 commander
@@ -11,12 +12,10 @@ commander
   .parse(process.argv);
 
 function lint(path) {
-  const keys = Object.keys(linters);
-  if (keys.length > 0) {
-    keys.forEach((key) => {
-      const Linter = linters[key];
-      const linter = new Linter(path);
-      linter.run();
-    });
+  const key = keys.pop();
+  if (key) {
+    const linter = new linters[key](path);
+    linter.run()
+      .then(() => {lint(path)});
   }
 }
