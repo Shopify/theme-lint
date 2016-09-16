@@ -29,5 +29,8 @@ function lint(path) {
       .then(() => {lint(path)});
   } else {
     reporter.finalize();
+    if (reporter.failures.length > 0) {
+      process.on('exit', () => process.exit(1));
+    }
   }
 }
