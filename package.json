@@ -6,10 +6,14 @@
   "scripts": {
     "test": "mocha ./test/**/*_test.js"
   },
+  "bin": {
+    "theme-lint": "./cli.js"
+  },
   "author": "",
   "license": "MIT",
   "dependencies": {
     "chalk": "^1.1.3",
+    "commander": "^2.9.0",
     "glob": "^7.0.6",
     "lodash": "^4.15.0"
   },
