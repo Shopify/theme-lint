@@ -1,10 +1,11 @@
 #!/usr/bin/env node
+const pkg = require('./package.json');
 const linters = require('./index').linters;
 const keys = Object.keys(linters);
 const commander = require('commander');
 
 commander
-  .version('0.0.1')
+  .version(pkg.version)
   .arguments('<path>')
   .action(path => lint(path))
   .usage('<path>')
