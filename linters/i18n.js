@@ -7,7 +7,7 @@ const path = require('path');
 
 const Reporter = require('../reporter');
 
-const PIPE_T_RXP = /\{\{\s*('|")([^\1]+?)\1\s*\|\s*t/g;
+const PIPE_T_RXP = /\{\{\s*('|")((?:(?!\1).)+)\1\s*\|\s*t(?:ranslate)?(?::(.*?)\s*(?:\||\}\}))?/g;
 
 module.exports = class I18nLinter {
   constructor(targetDirectory) {
@@ -15,6 +15,58 @@ module.exports = class I18nLinter {
   }
 
   run(reporter = new Reporter) {
+    return Promise.all([
+      this.loadTranslations(),
+      this.listReferences()
+    ]).then(([translations, referencedKeys]) => {
+      const defaultLocale = Object.keys(translations).find(k => k.includes('.default'));
+
+      if (defaultLocale) {
+        const localePath = path.join(this.targetDirectory, 'locales', defaultLocale + '.json');
+        reporter.success('Includes a default locale file', localePath);
+      } else {
+        reporter.failure('Does not include a default locale file');
+      }
+
+      const defaultLocaleData = translations[defaultLocale];
+
+      referencedKeys.forEach(({file, index, key}) => {
+        if (defaultLocaleData[key]) {
+          reporter.success(`${key} has a matching entry in ${defaultLocale}`, file, index);
+        } else {
+          reporter.failure(`${key} does not have a matching entry in ${defaultLocale}`, file, index);
+        }
+      });
+
+      const defaultLocaleKeys = Object.keys(defaultLocaleData);
+
+      _.forOwn(translations, (localeData, key) => {
+        if (key === defaultLocale) return;
+
+        const localePath = path.join(this.targetDirectory, 'locales', key + '.json');
+        const localeKeys = Object.keys(localeData);
+
+        const errors = [];
+
+        const missingKeys = _.difference(defaultLocaleKeys, localeKeys);
+        if (missingKeys.length > 0) {
+          errors.push(`missing: ${missingKeys.join(', ')}`);
+        }
+
+        const extraKeys = _.difference(localeKeys, defaultLocaleKeys);
+        if (extraKeys.length > 0) {
+          errors.push(`extra: ${extraKeys.join(', ')}`);
+        }
+
+        if (errors.length === 0) {
+          reporter.success(`${key} has all the entries present in ${defaultLocale}`, localePath);
+        } else {
+          reporter.failure(`Mismatching entries found\n${errors.join('\n')}`, localePath);
+        }
+      });
+
+      reporter.done();
+    });
   }
 
   listLiquidFiles() {
@@ -26,27 +78,40 @@ module.exports = class I18nLinter {
     });
   }
 
-  listReferences(file) {
+  listReferencedKeys(file) {
     return new Promise((resolve, reject) => {
       fs.readFile(file, {encoding: 'utf-8'}, (err, content) => {
         if (err) return reject(err);
 
         const matcher = new RegExp(PIPE_T_RXP);
-        const matches = [];
+        const references = [];
 
         while (true) {
           const match = matcher.exec(content);
           if (!match) break;
-          matches.push({
-            file: file,
-            index: match.index,
-            key: match[2]
-          });
+
+          const key = match[2];
+          const args = match[3];
+
+          const reference = {file, key, index: match.index};
+
+          // https://help.shopify.com/themes/development/internationalizing/translation-filter#pluralization-in-translation-keys
+          if (args && args.split(/\s+/).indexOf('count:') >= 0) {
+            reference.key += '.other';
+          }
+
+          references.push(reference);
         }
 
-        resolve(matches);
+        resolve(references);
       });
     });
+  }
+
+  listReferences() {
+    return this.listLiquidFiles()
+      .then(files => Promise.all(files.map(f => this.listReferencedKeys(f))))
+      .then(results => [].concat(...results));
   }
 
   listTranslationFiles() {
@@ -67,11 +132,11 @@ module.exports = class I18nLinter {
     return acc;
   }
 
-  loadTranslationData(file) {
+  loadTranslationFile(file) {
     return new Promise((resolve, reject) => {
       fs.readFile(file, {encoding: 'utf-8'}, (err, content) => {
         if (err) return reject(err);
-        const locale = path.basename(file).split('.')[0];
+        const locale = path.basename(file, '.json');
         resolve([locale, this.flattenKeys(JSON.parse(content))]);
       });
     });
@@ -79,7 +144,7 @@ module.exports = class I18nLinter {
 
   loadTranslations() {
     return this.listTranslationFiles()
-      .then(files => Promise.all(files.map(this.loadTranslationData.bind(this))))
+      .then(files => Promise.all(files.map(this.loadTranslationFile.bind(this))))
       .then(_.fromPairs);
   }
 };

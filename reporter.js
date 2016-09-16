@@ -9,28 +9,28 @@ module.exports = class Reporter {
     this.failures = [];
   }
 
-  success(file, index, message) {
-    this.successes.push([file, index, message]);
+  success(message, file = null, index = null) {
+    this.successes.push([message, file, index]);
     this.outputStream.write(chalk.green('.')); 
   }
 
-  failure(file, index, message) {
-    this.failures.push([file, index, message]);
+  failure(message, file, index) {
+    this.failures.push([message, file, index]);
     this.outputStream.write(chalk.red('.'));
   }
 
   done() {
-    this.outputStream.write('\n');
+    this.outputStream.write('\n\n');
 
     if (this.failures.length === 0) {
       this.outputStream.write(chalk.green('All good!'));
       return;
     }
 
-    this.failures.forEach(([file, index, message]) => {
-      this.outputStream.write(chalk.red(`${file} ${index} ${message}\n`));
-    });
+    this.outputStream.write(chalk.red('Errors encountered!\n\n'));
 
-    this.outputStream.write(chalk.red('Errors encountered!'));
+    this.failures.forEach(([message, file, index]) => {
+      this.outputStream.write(chalk.red(`${file}${index ? ':' + index : ''}\n${message}\n`));
+    });
   }
 };
