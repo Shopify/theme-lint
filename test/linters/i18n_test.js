@@ -40,8 +40,9 @@ describe('I18nLinter', function(){
 
       return this.linter.testDefaultLocale(this.reporter).then(() => {
         assert.equal(1, this.reporter.successes.length);
-        const [message] = this.reporter.successes[0];
+        const [message, file] = this.reporter.successes[0];
         assert.equal('Includes a default locale file', message);
+        assert.equal('/path/to/theme/locales/en.default.json', file);
       });
     });
   });
@@ -59,8 +60,10 @@ describe('I18nLinter', function(){
 
       return this.linter.testReferencedKeys(this.reporter).then(() => {
         assert.equal(1, this.reporter.failures.length);
-        const [message] = this.reporter.failures[0];
+        const [message, file, index] = this.reporter.failures[0];
         assert.equal("'product.card.title' does not have a matching entry in 'en.default'", message);
+        assert.equal('/path/to/theme/templates/product.liquid', file);
+        assert.equal(0, index);
       });
     });
 
@@ -76,8 +79,10 @@ describe('I18nLinter', function(){
 
       return this.linter.testReferencedKeys(this.reporter).then(() => {
         assert.equal(1, this.reporter.failures.length);
-        const [message] = this.reporter.failures[0];
+        const [message, file, index] = this.reporter.failures[0];
         assert.equal("'product.inventory_with_count.other' does not have a matching entry in 'en.default'", message);
+        assert.equal('/path/to/theme/templates/product.liquid', file);
+        assert.equal(0, index);
       });
     });
 
@@ -99,8 +104,10 @@ describe('I18nLinter', function(){
 
       return this.linter.testReferencedKeys(this.reporter).then(() => {
         assert.equal(1, this.reporter.successes.length);
-        const [message] = this.reporter.successes[0];
+        const [message, file, index] = this.reporter.successes[0];
         assert.equal("'product.card.title' has a matching entry in 'en.default'", message);
+        assert.equal('/path/to/theme/templates/product.liquid', file);
+        assert.equal(0, index);
       });
     });
 
@@ -122,8 +129,10 @@ describe('I18nLinter', function(){
 
       return this.linter.testReferencedKeys(this.reporter).then(() => {
         assert.equal(1, this.reporter.successes.length);
-        const [message] = this.reporter.successes[0];
+        const [message, file, index] = this.reporter.successes[0];
         assert.equal("'product.inventory_with_count.other' has a matching entry in 'en.default'", message);
+        assert.equal('/path/to/theme/templates/product.liquid', file);
+        assert.equal(0, index);
       });
     });
   });
