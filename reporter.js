@@ -11,7 +11,7 @@ module.exports = class Reporter {
 
   success(message, file = null, index = null) {
     this.successes.push([message, file, index]);
-    this.outputStream.write(chalk.green('.')); 
+    this.outputStream.write(chalk.green('.'));
   }
 
   failure(message, file, index) {
@@ -22,15 +22,26 @@ module.exports = class Reporter {
   done() {
     this.outputStream.write('\n\n');
 
+    const testsRun = this.failures.length + this.successes.length;
+
     if (this.failures.length === 0) {
-      this.outputStream.write(chalk.green('All good!'));
+      this.outputStream.write([
+        chalk.green('All good!'),
+        `(${testsRun} checks run)`
+      ].join(' '));
       return;
     }
 
-    this.outputStream.write(chalk.red('Errors encountered!\n\n'));
+    this.outputStream.write([
+      chalk.red('Errors encountered!'),
+      `(${testsRun} checks run)`
+    ].join(' ') + '\n\n');
 
     this.failures.forEach(([message, file, index]) => {
-      this.outputStream.write(chalk.red(`${file}${index ? ':' + index : ''}\n${message}\n`));
+      this.outputStream.write([
+        chalk.red(`${file}${index ? ':' + index : ''}`),
+        message
+      ].join('\n') + '\n\n');
     });
   }
 };
