@@ -40,7 +40,7 @@ module.exports = class I18nLinter {
       this.defaultLocale(),
       this.listAllReferences()
     ]).then(([translations, defaultLocale, referencedKeys]) => {
-      const defaultLocaleData = translations[defaultLocale];
+      const defaultLocaleData = translations[defaultLocale] || {};
 
       referencedKeys.forEach(({file, index, key}) => {
         if (defaultLocaleData[key]) {
@@ -57,7 +57,7 @@ module.exports = class I18nLinter {
       this.loadTranslations(),
       this.defaultLocale()
     ]).then(([translations, defaultLocale]) => {
-      const defaultLocaleData = translations[defaultLocale];
+      const defaultLocaleData = translations[defaultLocale] || {};
       const defaultLocaleKeys = Object.keys(defaultLocaleData);
 
       _.forOwn(translations, (localeData, key) => {
