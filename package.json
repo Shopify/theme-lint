@@ -18,6 +18,7 @@
     "lodash": "^4.15.0"
   },
   "devDependencies": {
-    "mocha": "^3.0.2"
+    "mocha": "^3.0.2",
+    "mock-fs": "^3.11.0"
   }
 }
