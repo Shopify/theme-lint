@@ -1,6 +1,6 @@
 {
   "name": "@shopify/theme-lint",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A linter for Shopify theme localization written in Node",
   "main": "index.js",
   "scripts": {
