@@ -1,10 +1,16 @@
-# theme-lint [![CircleCI](https://circleci.com/gh/Shopify/theme-lint.svg?style=svg&circle-token=657f103115145d487fa8d2bd7bf93d34e2682b53)](https://circleci.com/gh/Shopify/theme-lint)
+# Theme Lint
+[![CircleCI](https://circleci.com/gh/Shopify/theme-lint.svg?style=svg&circle-token=657f103115145d487fa8d2bd7bf93d34e2682b53)](https://circleci.com/gh/Shopify/theme-lint)
 
+A linter for Shopify theme localization written in Node.
+
+## Installation
+
+```bash
+$ npm install --save-dev @shopify/theme-lint
 ```
-___________.__                            .____    .__        __
-\__    ___/|  |__   ____   _____   ____   |    |   |__| _____/  |_
-  |    |   |  |  \_/ __ \ /     \_/ __ \  |    |   |  |/    \   __\
-  |    |   |   Y  \  ___/|  Y Y  \  ___/  |    |___|  |   |  \  |
-  |____|   |___|  /\___  >__|_|  /\___  > |_______ \__|___|  /__|
-                \/     \/      \/     \/          \/       \/
-```
+
+## License
+
+MIT, see [LICENSE.md](http://github.com/Shopify/react-utilities/blob/master/LICENSE.md) for details.
+
+<img src="https://cdn.shopify.com/shopify-marketing_assets/builds/19.0.0/shopify-full-color-black.svg" width="200" />
