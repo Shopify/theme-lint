@@ -27,8 +27,8 @@ module.exports = class I18nLinter {
   run(reporter = new Reporter) {
     return this.testDefaultLocale(reporter)
       .then(() => this.testReferencedKeys(reporter))
-      .then(() => this.testHTML(reporter))
-      .then(() => this.testMismatchedKeys(reporter));
+      .then(() => this.testMismatchedKeys(reporter))
+      .then(() => this.testHTML(reporter));
   }
 
   testHTML(reporter) {
