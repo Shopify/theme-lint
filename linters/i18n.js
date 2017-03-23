@@ -10,6 +10,7 @@ const Reporter = require('../reporter');
 
 const PIPE_T_RXP = /\{\{\s*('|")((?:(?!\1).)+)\1\s*\|\s*t(?:ranslate)?(?::(.*?)\s*(?:\||\}\}))?/g;
 
+// https://github.com/htmllint/htmllint/wiki/Options
 const LINTER_RULES = {
   'line-end-style': false,
   'id-class-style': false
