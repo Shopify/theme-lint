@@ -188,7 +188,7 @@ describe('I18nLinter', function(){
   });
 
   describe('#testHTML', function() {
-    it('reports a success if valid HTML', function () {
+    it('reports a success for valid HTML', function () {
       mockFs({
         '/path/to/theme': {
           'locales': {
@@ -205,7 +205,7 @@ describe('I18nLinter', function(){
       });
     });
 
-    it('reports a failure if invalid HTML', function() {
+    it('reports a failure for invalid HTML', function() {
       mockFs({'/path/to/theme': {
         'locales': {
           'en.default.json': JSON.stringify({ 'hello_html': '<h1>Hello!' })
@@ -220,7 +220,7 @@ describe('I18nLinter', function(){
       });
     });
 
-    it('reports a failure if invalid HTML in pluralized key', function() {
+    it('reports a failure for invalid HTML in pluralized key', function() {
       mockFs({
         '/path/to/theme': {
           'locales': {
