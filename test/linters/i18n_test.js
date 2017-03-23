@@ -186,4 +186,38 @@ describe('I18nLinter', function(){
       });
     });
   });
+
+  describe('#testHTML', function() {
+    it('reports a success if valid HTML', function () {
+      mockFs({
+        '/path/to/theme': {
+          'locales': {
+            'en.default.json': JSON.stringify({ 'hello_html': '<h1>Hello!</h1>' })
+          }
+        }
+      });
+
+      return this.linter.testHTML(this.reporter).then(() => {
+        assert.equal(1, this.reporter.successes.length);
+        const [message, file] = this.reporter.successes[0];
+        assert.equal('/path/to/theme/locales/en.default.json', file);
+        assert.equal("'hello_html' contains valid HTML", message);
+      });
+    });
+
+    it('reports a failure if invalid HTML', function() {
+      mockFs({'/path/to/theme': {
+        'locales': {
+          'en.default.json': JSON.stringify({ 'hello_html': '<h1>Hello!' })
+        }
+      }});
+
+      return this.linter.testHTML(this.reporter).then(() => {
+        assert.equal(1, this.reporter.failures.length);
+        const [message, file] = this.reporter.failures[0];
+        assert.equal('/path/to/theme/locales/en.default.json', file);
+        assert.equal("'hello_html' contains invalid HTML. See https://github.com/htmllint/htmllint/wiki/Options#tag-close", message);
+      });
+    });
+  });
 });

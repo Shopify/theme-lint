@@ -4,10 +4,16 @@ const _ = require('lodash');
 const fs = require('fs');
 const glob = require('glob');
 const path = require('path');
+const htmllint = require('htmllint');
 
 const Reporter = require('../reporter');
 
 const PIPE_T_RXP = /\{\{\s*('|")((?:(?!\1).)+)\1\s*\|\s*t(?:ranslate)?(?::(.*?)\s*(?:\||\}\}))?/g;
+
+const LINTER_RULES = {
+  'line-end-style': false,
+  'id-class-style': false
+};
 
 module.exports = class I18nLinter {
   constructor(targetDirectory) {
@@ -20,7 +26,38 @@ module.exports = class I18nLinter {
   run(reporter = new Reporter) {
     return this.testDefaultLocale(reporter)
       .then(() => this.testReferencedKeys(reporter))
+      .then(() => this.testHTML(reporter))
       .then(() => this.testMismatchedKeys(reporter));
+  }
+
+  testHTML(reporter) {
+    return this.loadTranslations().then((translationsByLocale) => {
+      const promises = [];
+
+      _.forOwn(translationsByLocale, (translations, locale) => {
+        _.forOwn(translations, (value, key) => {
+          if (!_.endsWith(key, '_html')) return;
+
+          promises.push(
+            htmllint(value, LINTER_RULES).then((issues) => {
+              return { value, key, issues, locale };
+            })
+          );
+        });
+      });
+
+      return Promise.all(promises).then((results) => {
+        results.forEach((result) => {
+          if (result.issues.length) {
+            reporter.failure(
+              `'${result.key}' contains invalid HTML. See ${this.lintRuleURL(result.issues[0].rule)}`,
+              this.localePath(result.locale));
+          } else {
+            reporter.success(`'${result.key}' contains valid HTML`, this.localePath(result.locale));
+          }
+        });
+      });
+    });
   }
 
   testDefaultLocale(reporter) {
@@ -172,5 +209,9 @@ module.exports = class I18nLinter {
 
   localePath(locale) {
     return path.join(this.targetDirectory, 'locales', locale + '.json');
+  }
+
+  lintRuleURL(rule) {
+    return `https://github.com/htmllint/htmllint/wiki/Options#${rule}`;
   }
 };
