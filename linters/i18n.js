@@ -10,8 +10,10 @@ const Reporter = require('../reporter');
 
 const PIPE_T_RXP = /\{\{\s*('|")((?:(?!\1).)+)\1\s*\|\s*t(?:ranslate)?(?::(.*?)\s*(?:\||\}\}))?/g;
 
+const PLURALIZATION_KEYS = ['zero', 'one', 'two', 'other'];
+
 // https://github.com/htmllint/htmllint/wiki/Options
-const LINTER_RULES = {
+const HTML_LINT_RULES = {
   'line-end-style': false,
   'id-class-style': false
 };
@@ -99,10 +101,10 @@ module.exports = class I18nLinter {
 
       _.forOwn(translationsByLocale, (translations, locale) => {
         _.forOwn(translations, (value, key) => {
-          if (!_.endsWith(key, '_html')) return;
+          if (!this.isHTMLKey(key)) return;
 
           promises.push(
-            htmllint(value, LINTER_RULES).then((issues) => {
+            htmllint(value, HTML_LINT_RULES).then((issues) => {
               return { value, key, issues, locale };
             })
           );
@@ -121,6 +123,17 @@ module.exports = class I18nLinter {
         });
       });
     });
+  }
+
+  isHTMLKey(key) {
+    const keyParts = key.split('.');
+    let lastPart = _.last(keyParts);
+
+    if (_.includes(PLURALIZATION_KEYS, lastPart)) {
+      lastPart = keyParts.slice(-2, -1)[0];
+    }
+
+    return _.endsWith(lastPart, '_html');
   }
 
   listLiquidFiles() {
