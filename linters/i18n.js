@@ -31,36 +31,6 @@ module.exports = class I18nLinter {
       .then(() => this.testHTML(reporter));
   }
 
-  testHTML(reporter) {
-    return this.loadTranslations().then((translationsByLocale) => {
-      const promises = [];
-
-      _.forOwn(translationsByLocale, (translations, locale) => {
-        _.forOwn(translations, (value, key) => {
-          if (!_.endsWith(key, '_html')) return;
-
-          promises.push(
-            htmllint(value, LINTER_RULES).then((issues) => {
-              return { value, key, issues, locale };
-            })
-          );
-        });
-      });
-
-      return Promise.all(promises).then((results) => {
-        results.forEach((result) => {
-          if (result.issues.length) {
-            reporter.failure(
-              `'${result.key}' contains invalid HTML. See ${this.lintRuleURL(result.issues[0].rule)}`,
-              this.localePath(result.locale));
-          } else {
-            reporter.success(`'${result.key}' contains valid HTML`, this.localePath(result.locale));
-          }
-        });
-      });
-    });
-  }
-
   testDefaultLocale(reporter) {
     return this.defaultLocale().then(defaultLocale => {
       if (defaultLocale) {
@@ -119,6 +89,36 @@ module.exports = class I18nLinter {
         } else {
           reporter.failure(`Mismatching entries found\n${errors.join('\n')}`, this.localePath(key));
         }
+      });
+    });
+  }
+
+  testHTML(reporter) {
+    return this.loadTranslations().then((translationsByLocale) => {
+      const promises = [];
+
+      _.forOwn(translationsByLocale, (translations, locale) => {
+        _.forOwn(translations, (value, key) => {
+          if (!_.endsWith(key, '_html')) return;
+
+          promises.push(
+            htmllint(value, LINTER_RULES).then((issues) => {
+              return { value, key, issues, locale };
+            })
+          );
+        });
+      });
+
+      return Promise.all(promises).then((results) => {
+        results.forEach((result) => {
+          if (result.issues.length) {
+            reporter.failure(
+              `'${result.key}' contains invalid HTML. See ${this.lintRuleURL(result.issues[0].rule)}`,
+              this.localePath(result.locale));
+          } else {
+            reporter.success(`'${result.key}' contains valid HTML`, this.localePath(result.locale));
+          }
+        });
       });
     });
   }
