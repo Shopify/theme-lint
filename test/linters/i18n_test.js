@@ -186,4 +186,59 @@ describe('I18nLinter', function(){
       });
     });
   });
+
+  describe('#testHTML', function() {
+    it('reports a success for valid HTML', function () {
+      mockFs({
+        '/path/to/theme': {
+          'locales': {
+            'en.default.json': JSON.stringify({ 'hello_html': '<h1>Hello!</h1>' })
+          }
+        }
+      });
+
+      return this.linter.testHTML(this.reporter).then(() => {
+        assert.equal(1, this.reporter.successes.length);
+        const [message, file] = this.reporter.successes[0];
+        assert.equal('/path/to/theme/locales/en.default.json', file);
+        assert.equal("'hello_html' contains valid HTML", message);
+      });
+    });
+
+    it('reports a failure for invalid HTML', function() {
+      mockFs({'/path/to/theme': {
+        'locales': {
+          'en.default.json': JSON.stringify({ 'hello_html': '<h1>Hello!' })
+        }
+      }});
+
+      return this.linter.testHTML(this.reporter).then(() => {
+        assert.equal(1, this.reporter.failures.length);
+        const [message, file] = this.reporter.failures[0];
+        assert.equal('/path/to/theme/locales/en.default.json', file);
+        assert.equal("'hello_html' contains invalid HTML. See https://github.com/htmllint/htmllint/wiki/Options#tag-close", message);
+      });
+    });
+
+    it('reports a failure for invalid HTML in pluralized key', function() {
+      mockFs({
+        '/path/to/theme': {
+          'locales': {
+            'en.default.json': JSON.stringify({
+              'product_count_html': {
+                'other': '<span>{{ count }} products'
+              }
+            })
+          }
+        }
+      });
+
+      return this.linter.testHTML(this.reporter).then(() => {
+        assert.equal(1, this.reporter.failures.length);
+        const [message, file] = this.reporter.failures[0];
+        assert.equal('/path/to/theme/locales/en.default.json', file);
+        assert.equal("'product_count_html.other' contains invalid HTML. See https://github.com/htmllint/htmllint/wiki/Options#tag-close", message);
+      });
+    });
+  });
 });

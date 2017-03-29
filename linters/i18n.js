@@ -4,10 +4,19 @@ const _ = require('lodash');
 const fs = require('fs');
 const glob = require('glob');
 const path = require('path');
+const htmllint = require('htmllint');
 
 const Reporter = require('../reporter');
 
 const PIPE_T_RXP = /\{\{\s*('|")((?:(?!\1).)+)\1\s*\|\s*t(?:ranslate)?(?::(.*?)\s*(?:\||\}\}))?/g;
+
+const PLURALIZATION_KEYS = ['zero', 'one', 'two', 'other'];
+
+// https://github.com/htmllint/htmllint/wiki/Options
+const HTML_LINT_RULES = {
+  'line-end-style': false,
+  'id-class-style': false
+};
 
 module.exports = class I18nLinter {
   constructor(targetDirectory) {
@@ -20,7 +29,8 @@ module.exports = class I18nLinter {
   run(reporter = new Reporter) {
     return this.testDefaultLocale(reporter)
       .then(() => this.testReferencedKeys(reporter))
-      .then(() => this.testMismatchedKeys(reporter));
+      .then(() => this.testMismatchedKeys(reporter))
+      .then(() => this.testHTML(reporter));
   }
 
   testDefaultLocale(reporter) {
@@ -83,6 +93,47 @@ module.exports = class I18nLinter {
         }
       });
     });
+  }
+
+  testHTML(reporter) {
+    return this.loadTranslations().then((translationsByLocale) => {
+      const promises = [];
+
+      _.forOwn(translationsByLocale, (translations, locale) => {
+        _.forOwn(translations, (value, key) => {
+          if (!this.isHTMLKey(key)) return;
+
+          promises.push(
+            htmllint(value, HTML_LINT_RULES).then((issues) => {
+              return { value, key, issues, locale };
+            })
+          );
+        });
+      });
+
+      return Promise.all(promises).then((results) => {
+        results.forEach((result) => {
+          if (result.issues.length) {
+            reporter.failure(
+              `'${result.key}' contains invalid HTML. See ${this.lintRuleURL(result.issues[0].rule)}`,
+              this.localePath(result.locale));
+          } else {
+            reporter.success(`'${result.key}' contains valid HTML`, this.localePath(result.locale));
+          }
+        });
+      });
+    });
+  }
+
+  isHTMLKey(key) {
+    const keyParts = key.split('.');
+    let lastPart = _.last(keyParts);
+
+    if (_.includes(PLURALIZATION_KEYS, lastPart)) {
+      lastPart = keyParts.slice(-2, -1)[0];
+    }
+
+    return _.endsWith(lastPart, '_html');
   }
 
   listLiquidFiles() {
@@ -172,5 +223,9 @@ module.exports = class I18nLinter {
 
   localePath(locale) {
     return path.join(this.targetDirectory, 'locales', locale + '.json');
+  }
+
+  lintRuleURL(rule) {
+    return `https://github.com/htmllint/htmllint/wiki/Options#${rule}`;
   }
 };
