@@ -89,7 +89,7 @@ module.exports = class I18nLinter {
         if (errors.length === 0) {
           reporter.success(`'${key}' has all the entries present in '${defaultLocale}'`, this.localePath(key));
         } else {
-          reporter.failure(`Mismatching entries found\n${errors.join('\n')}`, this.localePath(key));
+          reporter.failure(`Mismatching entries found ${errors}`, this.localePath(key));
         }
       });
     });
