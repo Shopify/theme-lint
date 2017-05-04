@@ -150,7 +150,7 @@ describe('I18nLinter', function(){
         assert.equal(1, this.reporter.failures.length);
         const [message, file] = this.reporter.failures[0];
         assert.equal('/path/to/theme/locales/fr.json', file);
-        assert.equal("Mismatching entries found missing: 'hello', 'bye'", message);
+        assert.equal("Missing entries found: 'hello', 'bye'", message);
       });
     });
 
@@ -166,7 +166,7 @@ describe('I18nLinter', function(){
         assert.equal(1, this.reporter.failures.length);
         const [message, file] = this.reporter.failures[0];
         assert.equal('/path/to/theme/locales/fr.json', file);
-        assert.equal("Mismatching entries found extra: 'hello', 'bye'", message);
+        assert.equal("Extra entries found: 'hello', 'bye'", message);
       });
     });
 

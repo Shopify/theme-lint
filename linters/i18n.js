@@ -73,23 +73,20 @@ module.exports = class I18nLinter {
         if (key === defaultLocale) return;
 
         const localeKeys = Object.keys(localeData);
-
-        const errors = [];
+        const localePath = this.localePath(key);
 
         const missingKeys = _.difference(defaultLocaleKeys, localeKeys);
         if (missingKeys.length > 0) {
-          errors.push(`missing: ${missingKeys.map(k => `'${k}'`).join(', ')}`);
+          reporter.failure(`Missing entries found: ${missingKeys.map(k => `'${k}'`).join(', ')}`, localePath);
         }
 
         const extraKeys = _.difference(localeKeys, defaultLocaleKeys);
         if (extraKeys.length > 0) {
-          errors.push(`extra: ${extraKeys.map(k => `'${k}'`).join(', ')}`);
+          reporter.failure(`Extra entries found: ${extraKeys.map(k => `'${k}'`).join(', ')}`, localePath);
         }
 
-        if (errors.length === 0) {
-          reporter.success(`'${key}' has all the entries present in '${defaultLocale}'`, this.localePath(key));
-        } else {
-          reporter.failure(`Mismatching entries found ${errors}`, this.localePath(key));
+        if (missingKeys.length == 0 && extraKeys.length == 0) {
+          reporter.success(`'${key}' has all the entries present in '${defaultLocale}'`, localePath);
         }
       });
     });
