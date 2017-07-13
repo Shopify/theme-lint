@@ -20,7 +20,8 @@
   },
   "devDependencies": {
     "mocha": "^3.0.2",
-    "mock-fs": "^4.3.0"
+    "mock-fs": "^4.3.0",
+    "standard": "^10.0.2"
   },
   "directories": {
     "test": "test"
