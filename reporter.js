@@ -1,6 +1,7 @@
 'use strict';
 
 const chalk = require('chalk');
+const _ = require('lodash');
 
 module.exports = class Reporter {
   constructor(outputStream = require('process').stderr) {
@@ -11,37 +12,41 @@ module.exports = class Reporter {
 
   success(message, file = null, index = null) {
     this.successes.push([message, file, index]);
-    this.outputStream.write(chalk.green('.'));
   }
 
   failure(message, file, index) {
     this.failures.push([message, file, index]);
-    this.outputStream.write(chalk.red('.'));
   }
 
-  finalize() {
-    this.outputStream.write('\n\n');
-
+  output() {
     const testsRun = this.failures.length + this.successes.length;
+
+    this.outputStream.write('Translation tests complete: ');
 
     if (this.failures.length === 0) {
       this.outputStream.write([
-        chalk.green('All good!'),
-        `(${testsRun} checks run)`
+        chalk.green(`Success (${testsRun} checks run)`)
       ].join(' ') + '\n\n');
-      return;
+    } else {
+      this.outputStream.write([
+        chalk.red(`Failed (${testsRun} checks run)`)
+      ].join(' ') + '\n\n');
+
+      const failureGroups = _.groupBy(this.failures, (failure) => failure[1]);
+
+      _.forOwn(failureGroups, (failures, file) => {
+        this.outputStream.write(chalk.red(`${file}:\n`));
+
+        failures.map((failure) => {
+          return this.outputStream.write(`${failure[0]}\n`);
+        });
+      });
+
+      this.outputStream.write('\n');
+
+      throw new Error('Translation errors detected.');
     }
 
-    this.outputStream.write([
-      chalk.red('Errors encountered!'),
-      `(${testsRun} checks run)`
-    ].join(' ') + '\n\n');
-
-    this.failures.forEach(([message, file, index]) => {
-      this.outputStream.write([
-        chalk.red(`${file}${index ? ':' + index : ''}`),
-        message
-      ].join('\n') + '\n\n');
-    });
+    this.successes = this.failures = [];
   }
 };
