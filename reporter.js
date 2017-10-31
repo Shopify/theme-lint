@@ -24,13 +24,9 @@ module.exports = class Reporter {
     this.outputStream.write('Translation tests complete: ');
 
     if (this.failures.length === 0) {
-      this.outputStream.write([
-        chalk.green(`Success (${testsRun} checks run)`)
-      ].join(' ') + '\n\n');
+      this.outputStream.write(chalk.green(`Success (${testsRun} checks run)`) + '\n\n');
     } else {
-      this.outputStream.write([
-        chalk.red(`Failed (${testsRun} checks run)`)
-      ].join(' ') + '\n\n');
+      this.outputStream.write(chalk.red(`Failed (${testsRun} checks run)`) + '\n\n');
 
       const failureGroups = _.groupBy(this.failures, (failure) => failure[1]);
 
@@ -41,12 +37,6 @@ module.exports = class Reporter {
           return this.outputStream.write(`${failure[0]}\n`);
         });
       });
-
-      this.outputStream.write('\n');
-
-      throw new Error('Translation errors detected.');
     }
-
-    this.successes = this.failures = [];
   }
 };
