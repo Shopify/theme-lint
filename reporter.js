@@ -1,10 +1,10 @@
-'use strict';
+"use strict";
 
-const chalk = require('chalk');
-const _ = require('lodash');
+const chalk = require("chalk");
+const _ = require("lodash");
 
 module.exports = class Reporter {
-  constructor(outputStream = require('process').stderr) {
+  constructor(outputStream = require("process").stderr) {
     this.outputStream = outputStream;
     this.successes = [];
     this.failures = [];
@@ -21,19 +21,24 @@ module.exports = class Reporter {
   output() {
     const testsRun = this.failures.length + this.successes.length;
 
-    this.outputStream.write('Translation tests complete: ');
+    this.outputStream.write("Translation tests complete: ");
 
     if (this.failures.length === 0) {
-      this.outputStream.write(chalk.green(`Success (${testsRun} checks run)`) + '\n\n');
+      this.outputStream.write(
+        chalk.green(`Success (${testsRun} checks run)`) + "\n\n"
+      );
+      return;
     } else {
-      this.outputStream.write(chalk.red(`Failed (${testsRun} checks run)`) + '\n\n');
+      this.outputStream.write(
+        chalk.red(`Failed (${testsRun} checks run)`) + "\n\n"
+      );
 
-      const failureGroups = _.groupBy(this.failures, (failure) => failure[1]);
+      const failureGroups = _.groupBy(this.failures, failure => failure[1]);
 
       _.forOwn(failureGroups, (failures, file) => {
         this.outputStream.write(chalk.red(`${file}:\n`));
 
-        failures.map((failure) => {
+        failures.map(failure => {
           return this.outputStream.write(`${failure[0]}\n`);
         });
       });
