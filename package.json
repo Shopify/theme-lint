@@ -4,7 +4,9 @@
   "description": "A linter for Shopify theme localization written in Node",
   "main": "index.js",
   "scripts": {
-    "test": "mocha ./test/**/*_test.js"
+    "test": "mocha ./test/**/*_test.js",
+    "prettier-check": "prettier --list-different '**/*.js'",
+    "prettier": "prettier --write '**/*.js'"
   },
   "bin": {
     "theme-lint": "./cli.js"
