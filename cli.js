@@ -2,7 +2,6 @@
 'use strict';
 
 const commander = require('commander');
-const _ = require('lodash');
 
 const pkg = require('./package.json');
 const {runAll} = require('./index');
@@ -20,7 +19,7 @@ if (!process.argv.slice(2).length) {
 
 function lint(path) {
   return runAll(path).then(reporter => {
-    reporter.finalize();
+    reporter.output();
 
     if (reporter.failures.length > 0) {
       process.on('exit', () => process.exit(1));
