@@ -28,20 +28,20 @@ module.exports = class Reporter {
         chalk.green(`Success (${testsRun} checks run)`) + "\n\n"
       );
       return;
-    } else {
-      this.outputStream.write(
-        chalk.red(`Failed (${testsRun} checks run)`) + "\n\n"
-      );
-
-      const failureGroups = _.groupBy(this.failures, failure => failure[1]);
-
-      _.forOwn(failureGroups, (failures, file) => {
-        this.outputStream.write(chalk.red(`${file}:\n`));
-
-        failures.map(failure => {
-          return this.outputStream.write(`${failure[0]}\n`);
-        });
-      });
     }
+
+    this.outputStream.write(
+      chalk.red(`Failed (${testsRun} checks run)`) + "\n\n"
+    );
+
+    const failureGroups = _.groupBy(this.failures, failure => failure[1]);
+
+    _.forOwn(failureGroups, (failures, file) => {
+      this.outputStream.write(chalk.red(`${file}:\n`));
+
+      failures.map(failure => {
+        return this.outputStream.write(`${failure[0]}\n`);
+      });
+    });
   }
 };
