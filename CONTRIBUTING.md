@@ -1,4 +1,5 @@
 # How to contribute
+
 We ❤️ pull requests. If you'd like to fix a bug, contribute a feature or
 just correct a typo, please feel free to do so, as long as you follow
 our [Code of Conduct](https://github.com/Shopify/theme-lint/blob/master/CODE_OF_CONDUCT.md).
@@ -8,6 +9,7 @@ issue first to discuss it to ensure it aligns to the direction of the
 project (and potentially save yourself some time!).
 
 ## Getting Started
+
 To start working on the codebase, first fork the repo, then clone it:
 ```
 git clone git@github.com:your-username/theme-lint.git
@@ -15,6 +17,7 @@ git clone git@github.com:your-username/theme-lint.git
 *Note: replace "your-username" with your Github handle*
 
 Install the project's dependencies:
+
 ```
 npm install
 ```
@@ -22,9 +25,16 @@ npm install
 Write some features.
 
 Add some tests and make your change. Re-run the tests with:
+
 ```
 npm run test
 ```
+
+## Style
+
+We use an automatic code formatter called [Prettier](https://prettier.io/).
+
+Run `npm run prettier` after making any changes to the code.
 
 ## Documentation
 If your change affects how people use the project (i.e. adding or
