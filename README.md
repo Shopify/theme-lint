@@ -1,5 +1,4 @@
-# Theme Lint
-[![CircleCI](https://circleci.com/gh/Shopify/theme-lint.svg?style=svg&circle-token=657f103115145d487fa8d2bd7bf93d34e2682b53)](https://circleci.com/gh/Shopify/theme-lint)
+# Theme Lint [![Build status](https://badge.buildkite.com/94fbd194b3af65972b61c68407238f576490b65395cea6219f.svg)](https://buildkite.com/shopify/theme-lint)
 
 A linter for Shopify theme localization written in Node.
 
