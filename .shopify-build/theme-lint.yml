@@ -1,0 +1,13 @@
+containers:
+  default:
+    docker: circleci/node:6.14.3
+
+steps:
+- label: Tests
+  timeout: 5m
+  cache:
+    - node_modules
+  run:
+    - npm install
+    - npm run test
+    - npm run prettier-check
