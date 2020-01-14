@@ -1,4 +1,4 @@
-# Theme Lint [![Build status](https://badge.buildkite.com/94fbd194b3af65972b61c68407238f576490b65395cea6219f.svg)](https://buildkite.com/shopify/theme-lint)
+# Theme Lint
 
 A linter for Shopify theme localization written in Node.
 
