@@ -1,5 +1,7 @@
 # Theme Lint
 
+[![Build Status](https://travis-ci.org/Shopify/theme-lint.svg?branch=master)](https://travis-ci.org/Shopify/theme-lint)
+
 A linter for Shopify theme localization written in Node.
 
 ## Getting started
