@@ -1,6 +1,6 @@
 "use strict";
 
-const PIPE_T_RXP = /\{\{\s*('|")((?:(?!\1).)+)\1\s*\|\s*t(?:ranslate)?(?::(.*?)\s*(?:\||\}\}))?/g;
+const PIPE_T_RXP = /\{\{\s*('|")((?:(?!\1).)+)\1\s*\|\s*t(?:ranslate)?(?::(.*?))?\s*(?:\||\}\})/g;
 
 module.exports = class TranslationFilterScanner {
   constructor(fileContents) {
