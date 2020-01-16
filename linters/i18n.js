@@ -7,8 +7,7 @@ const path = require("path");
 const htmllint = require("htmllint");
 
 const Reporter = require("../reporter");
-
-const PIPE_T_RXP = /\{\{\s*('|")((?:(?!\1).)+)\1\s*\|\s*t(?:ranslate)?(?::(.*?)\s*(?:\||\}\}))?/g;
+const TranslationFilterScanner = require("./translation_filter_scanner");
 
 const PLURALIZATION_KEYS = ["zero", "one", "two", "other"];
 
@@ -174,17 +173,11 @@ module.exports = class I18nLinter {
       fs.readFile(file, { encoding: "utf-8" }, (err, content) => {
         if (err) return reject(err);
 
-        const matcher = new RegExp(PIPE_T_RXP);
+        const scanner = new TranslationFilterScanner(content);
         const references = [];
 
-        while (true) {
-          const match = matcher.exec(content);
-          if (!match) break;
-
-          const key = match[2];
-          const args = match[3];
-
-          const reference = { file, key, index: match.index };
+        scanner.forEach(({ key, args, index }) => {
+          const reference = { file, key, index };
 
           // https://help.shopify.com/themes/development/internationalizing/translation-filter#pluralization-in-translation-keys
           if (args && args.split(/\s+/).indexOf("count:") >= 0) {
@@ -192,7 +185,7 @@ module.exports = class I18nLinter {
           }
 
           references.push(reference);
-        }
+        });
 
         resolve(references);
       });
