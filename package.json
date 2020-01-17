@@ -40,5 +40,9 @@
   "bugs": {
     "url": "https://github.com/Shopify/theme-lint/issues"
   },
-  "homepage": "https://github.com/Shopify/theme-lint#readme"
+  "homepage": "https://github.com/Shopify/theme-lint#readme",
+  "publishConfig": {
+    "access": "public",
+    "@shopify:registry": "https://registry.npmjs.org/"
+  }
 }
