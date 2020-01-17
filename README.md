@@ -1,6 +1,6 @@
 # Theme Lint
 
-[![Build Status](https://travis-ci.com/Shopify/theme-lint.svg?branch=master)](https://travis-ci.com/Shopify/theme-lint)
+[![Build Status](https://travis-ci.com/Shopify/theme-lint.svg?branch=master)](https://travis-ci.com/Shopify/theme-lint) [![npm version](https://badge.fury.io/js/%40shopify%2Ftheme-lint.svg)](https://badge.fury.io/js/%40shopify%2Ftheme-lint)
 
 A linter for Shopify theme localization written in Node.
 
