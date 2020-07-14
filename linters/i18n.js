@@ -9,7 +9,7 @@ const htmllint = require("htmllint");
 const Reporter = require("../reporter");
 const TranslationFilterScanner = require("./translation_filter_scanner");
 
-const PLURALIZATION_KEYS = ["zero", "one", "two", "other"];
+const PLURALIZATION_KEYS = ['zero', 'one', 'two', 'few', 'many', 'other'];
 
 // https://github.com/htmllint/htmllint/wiki/Options
 const HTML_LINT_RULES = {
@@ -76,6 +76,7 @@ module.exports = class I18nLinter {
       ([translations, defaultLocale]) => {
         const defaultLocaleData = translations[defaultLocale] || {};
         const defaultLocaleKeys = Object.keys(defaultLocaleData);
+        const regex = new RegExp(`\\.((${PLURALIZATION_KEYS.join('|')}){1})$`);
 
         _.forOwn(translations, (localeData, key) => {
           if (key === defaultLocale) return;
@@ -93,7 +94,20 @@ module.exports = class I18nLinter {
             );
           }
 
-          const extraKeys = _.difference(localeKeys, defaultLocaleKeys);
+          const extraKeys = _.difference(localeKeys, defaultLocaleKeys).filter(key => {
+            if(!key.match(regex)) return true;
+
+            const lastPart = key.match(regex);
+            const filteredKeys = PLURALIZATION_KEYS.filter(pluralKey => {
+              if (lastPart.includes(pluralKey)) return false;
+
+              const newKey = key.replace(lastPart[0], `.${pluralKey}`);
+              return localeData[newKey] !== undefined;
+            });
+
+            return !filteredKeys.length;
+          });
+
           if (extraKeys.length > 0) {
             reporter.failure(
               `Extra entries found: ${extraKeys.map(k => `'${k}'`).join(", ")}`,

@@ -198,6 +198,96 @@ describe("I18nLinter", function() {
       });
     });
 
+    it("reports a success for pluralization keys not present in the default locale but present in others", function() {
+      mockFs({
+        "/path/to/theme": {
+          locales: {
+            "en.default.json": JSON.stringify(
+              {
+                products: {
+                  product: {
+                    count: {
+                      one: "un",
+                      other: "autre"
+                    }
+                  }
+                }
+              }
+            ),
+            "fr.json": JSON.stringify(
+              {
+                products: {
+                  product: {
+                    count: {
+                      one: "un",
+                      many: "plusieurs",
+                      other: "autre"
+                    }
+                  }
+                }
+              }
+            )
+          }
+        }
+      });
+
+      return this.linter.testMismatchedKeys(this.reporter).then(() => {
+        assert.equal(1, this.reporter.successes.length);
+        const [message, file] = this.reporter.successes[0];
+        assert.equal("/path/to/theme/locales/fr.json", file);
+        assert.equal(
+          "'fr' has all the entries present in 'en.default'",
+          message
+        );
+      });
+    });
+
+    it("reports a failure for extra keys that are not pluralization keys and present in non-default locales", function() {
+      mockFs({
+        "/path/to/theme": {
+          locales: {
+            "en.default.json": JSON.stringify(
+              {
+                products: {
+                  product: {
+                    count: {
+                      one: "un",
+                      other: "autre"
+                    }
+                  }
+                }
+              }
+            ),
+            "fr.json": JSON.stringify(
+              {
+                products: {
+                  product: {
+                    count: {
+                      one: "un",
+                      many: "plusieurs",
+                      other: "autre",
+                      ten: "dix"
+                    },
+                    one: "Titre"
+                  }
+                }
+              }
+            )
+          }
+        }
+      });
+
+      return this.linter.testMismatchedKeys(this.reporter).then(() => {
+        assert.equal(1, this.reporter.failures.length);
+        const [message, file] = this.reporter.failures[0];
+        assert.equal("/path/to/theme/locales/fr.json", file);
+        assert.equal(
+          "Extra entries found: 'products.product.count.ten', 'products.product.one'",
+          message
+        );
+      });
+    });
+
     it("reports a success if all keys match", function() {
       mockFs({
         "/path/to/theme": {
