@@ -202,31 +202,27 @@ describe("I18nLinter", function() {
       mockFs({
         "/path/to/theme": {
           locales: {
-            "en.default.json": JSON.stringify(
-              {
-                products: {
-                  product: {
-                    count: {
-                      one: "un",
-                      other: "autre"
-                    }
+            "en.default.json": JSON.stringify({
+              products: {
+                product: {
+                  count: {
+                    one: "un",
+                    other: "autre"
                   }
                 }
               }
-            ),
-            "fr.json": JSON.stringify(
-              {
-                products: {
-                  product: {
-                    count: {
-                      one: "un",
-                      many: "plusieurs",
-                      other: "autre"
-                    }
+            }),
+            "fr.json": JSON.stringify({
+              products: {
+                product: {
+                  count: {
+                    one: "un",
+                    many: "plusieurs",
+                    other: "autre"
                   }
                 }
               }
-            )
+            })
           }
         }
       });
@@ -246,33 +242,29 @@ describe("I18nLinter", function() {
       mockFs({
         "/path/to/theme": {
           locales: {
-            "en.default.json": JSON.stringify(
-              {
-                products: {
-                  product: {
-                    count: {
-                      one: "un",
-                      other: "autre"
-                    }
+            "en.default.json": JSON.stringify({
+              products: {
+                product: {
+                  count: {
+                    one: "un",
+                    other: "autre"
                   }
                 }
               }
-            ),
-            "fr.json": JSON.stringify(
-              {
-                products: {
-                  product: {
-                    count: {
-                      one: "un",
-                      many: "plusieurs",
-                      other: "autre",
-                      ten: "dix"
-                    },
-                    one: "Titre"
-                  }
+            }),
+            "fr.json": JSON.stringify({
+              products: {
+                product: {
+                  count: {
+                    one: "un",
+                    many: "plusieurs",
+                    other: "autre",
+                    ten: "dix"
+                  },
+                  one: "Titre"
                 }
               }
-            )
+            })
           }
         }
       });
