@@ -43,3 +43,22 @@ return value, etc), please ensure the documentation is also updated to
 reflect this. Documentation is made in the `README.md`.
 
 If further documentation is needed please communicate this via Github Issues.
+
+## Publish a new version
+
+:warning: Note: You must have a Shopify Okta account in order to login to Shipit and publish a new version.
+1. Merge any changes you want to include in your next release into `master`.
+2. Pull in the latest changes from `master` and run:
+   ```
+   npm version <major | minor | patch> && git push --follow-tags
+   ```
+
+   This will update:
+    * The version in `package.json`
+    * The version in `package-lock.json`
+    * Create a new tag for your release
+3. Add the changes that you have made to the [CHANGELOG.md](https://github.com/Shopify/theme-lint/blob/master/CHANGELOG.md)
+4. Create a [release](https://github.com/Shopify/theme-lint/releases)
+   * Edit the tag you just created and use the changelog content for the description
+5. Go to [shipit](https://shipit.shopify.io/shopify/theme-lint/production) and deploy the latest commit
+6. Confirm that the release was published on [npmjs](https://www.npmjs.com/package/@shopify/theme-lint)
