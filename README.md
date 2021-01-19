@@ -4,6 +4,8 @@
 
 A linter for Shopify theme localization written in Node.
 
+⚠️ Theme Lint is not actively maintained. Check out [Theme Check](https://github.com/shopify/theme-check), which implements the same lints along with [many other features](https://github.com/shopify/theme-check#supported-checks).
+
 ## Getting started
 
 Add `theme-lint` as a devDependency to a Shopify theme by running the following command inside of the theme directory:
